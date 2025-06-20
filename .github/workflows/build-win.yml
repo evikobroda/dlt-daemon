@@ -11,11 +11,17 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
  
-      - name: Fix GCC flags (remove -Wextra)
+      - name: Remove incompatible GCC flags
+        shell: pwsh
         run: |
-          (Get-ChildItem -Recurse -Filter CMakeLists.txt | ForEach-Object {
-            (Get-Content $_.FullName) -replace "-Wextra", "" | Set-Content $_.FullName
-          })
+          Get-ChildItem -Recurse -Filter CMakeLists.txt | ForEach-Object {
+            (Get-Content $_.FullName) `
+              -replace "-Wextra", "" `
+              -replace "-Wall", "" `
+              -replace "-Wno-variadic-macros", "" `
+              -replace "-Wno-unused-parameter", "" `
+              | Set-Content $_.FullName
+          }
  
       - name: Install CMake
         uses: jwlawson/actions-setup-cmake@v1
