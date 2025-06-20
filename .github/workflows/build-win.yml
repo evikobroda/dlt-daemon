@@ -11,15 +11,12 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
  
-      - name: Remove incompatible GCC flags
+      - name: Remove all GCC warning flags (-W...)
         shell: pwsh
         run: |
           Get-ChildItem -Recurse -Filter CMakeLists.txt | ForEach-Object {
             (Get-Content $_.FullName) `
-              -replace "-Wextra", "" `
-              -replace "-Wall", "" `
-              -replace "-Wno-variadic-macros", "" `
-              -replace "-Wno-unused-parameter", "" `
+              -replace "-W[a-zA-Z0-9\-]+", "" `
               | Set-Content $_.FullName
           }
  
